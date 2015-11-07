@@ -1,0 +1,20 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: 10
+  timeout: 5000
+  username: bhl_admin
+  # TODO
+  # password: <%= ENV['BENHL_DATABASE_PASSWORD'] %>
+
+development:
+  <<: *default
+  database: bhl_dev
+
+test:
+  <<: *default
+  database: bhl_test
+
+production:
+  <<: *default
+  database: bhl_prod
