@@ -34,8 +34,8 @@ class Game < ActiveRecord::Base
   private
 
   def set_scores_and_status
-    self.home_score = 0
-    self.away_score = 0
-    self.status_id = 1
+    self.home_score ||= 0
+    self.away_score ||= 0
+    self.status_id  ||= 1
   end
 end

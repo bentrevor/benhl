@@ -11,9 +11,11 @@ describe Game do
   end
 
   describe 'score' do
-    it 'starts at 0' do
+    it 'starts at 0 unless specified' do
       expect(game.home_score).to be 0
       expect(game.away_score).to be 0
+
+      expect(described_class.create(home_score: 10).home_score).to eq 10
     end
 
     it 'knows the winner' do
@@ -29,8 +31,10 @@ describe Game do
   end
 
   describe 'status' do
-    it 'starts as :unplayed' do
+    it 'starts as :unplayed unless specified' do
       expect(game.status).to be :unplayed
+
+      expect(described_class.create(status_id: 4).status).to eq :shootout
     end
 
     it 'knows if it has been played' do
