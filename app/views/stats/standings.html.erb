@@ -1,0 +1,35 @@
+<h2>Eastern Conference</h2>
+<div>
+  <h3>Atlantic Division</h3>
+  <ul>
+    <% @teams.atlantic.each do |team| %>
+      <li><%= team.name %></li>
+    <% end %>
+  </ul>
+</div>
+<div>
+  <h3>Metropolitan Division</h3>
+  <ul>
+    <% @teams.metropolitan.each do |team| %>
+      <li><%= team.name %></li>
+    <% end %>
+  </ul>
+</div>
+
+<h2>Western Conference</h2>
+<div>
+  <h3>Central Division</h3>
+  <ul>
+    <% @teams.central.each do |team| %>
+      <li><%= team.name %></li>
+    <% end %>
+  </ul>
+</div>
+<div>
+  <h3>Pacific Division</h3>
+  <ul>
+    <% @teams.pacific.each do |team| %>
+      <li><%= team.name %></li>
+    <% end %>
+  </ul>
+</div>
