@@ -14,6 +14,9 @@
  *= require_self
  */
 
+$green: #3f3;
+$red: #d22;
+$light_red: #e66;
 $light-gray: #ccc;
 $gray: #777;
 
@@ -43,6 +46,16 @@ table {
 .division_title, .conference_title {
     text-align: center;
 }
+
+.last_10 {
+    width: 2rem;
+    height: 2rem;
+    display: inline;
+}
+
+.last_10_w {background: $green;}
+.last_10_l {background: $red}
+.last_10_o {background: $light-red}
 
 /* tablesort */
 th.sort-header::-moz-selection { background:transparent; }

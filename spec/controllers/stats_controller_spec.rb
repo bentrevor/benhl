@@ -7,13 +7,15 @@ describe StatsController do
     expect(response.status).to eq 200
   end
 
-  it 'shows all teams using TeamPresenters' do
-    3.times {|n| Team.create(name: "team#{n}") }
+  it 'shows all teams using TeamStandingsPresenters' do
+    3.times {|n| Team.create(name: "team#{n}", division_id: n + 1) }
 
     get :standings, season: 2012
 
-    # expect(assigns(:teams).first).to be_a TeamPresenter
-    expect(assigns(:teams).first.season).to be 2012
+    pres = assigns(:teams)[:atlantic].first
+
+    expect(pres).to be_a TeamStandingsPresenter
+    expect(pres.season).to be 2012
   end
 
   it 'shows standings for the given year' do
