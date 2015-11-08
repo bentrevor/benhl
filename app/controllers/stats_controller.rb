@@ -1,7 +1,10 @@
 class StatsController < ApplicationController
 
   def standings
-    @teams = Team.all
+    season = params[:season].to_i
+
+    @teams = Team.all.map {|t| TeamPresenter.new(t, season)}
+    @season = [season, season + 1]
   end
 
 end
