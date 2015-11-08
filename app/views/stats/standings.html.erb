@@ -1,18 +1,10 @@
 <h1 class="season_title"><%= "#{@season[0]}-#{@season[1]} Season" %></h1>
 <h2 class="conference_title">Eastern Conference</h2>
 
-<table>
   <%= render partial: "show_division", locals: { division_name: "Atlantic Division", teams: @teams[:atlantic] } %>
-</table>
-<table>
   <%= render partial: "show_division", locals: { division_name: "Metropolitan Division", teams: @teams[:metropolitan] } %>
-</table>
 
 <h2 class="conference_title">Western Conference</h2>
 
-<table>
   <%= render partial: "show_division", locals: { division_name: "Central Division", teams: @teams[:central] } %>
-</table>
-<table>
   <%= render partial: "show_division", locals: { division_name: "Pacific Division", teams: @teams[:pacific] } %>
-</table>

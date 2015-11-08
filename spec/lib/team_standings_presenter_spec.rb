@@ -85,6 +85,9 @@ describe TeamStandingsPresenter do
                                    home_team: team_b, home_score: 1,
                                    away_team: team_a, away_score: 10) }
 
+    let!(:not_played_yet) { Game.create(season: 2012, datetime: Date.parse("Nov 10, 2014"), status_id: 1,
+                                        home_team: team_b, away_team: team_a) }
+
     before do
       10.times do |i|
         Game.create(season: 2012, datetime: Date.parse("Oct #{i + 2}, 2014"), status_id: 2,
@@ -94,14 +97,15 @@ describe TeamStandingsPresenter do
     end
 
     it 'knows the last 10 games' do
-      expect(pres12_a.last_10.length).to eq 10
-      expect(pres12_a.last_10).not_to include early_game
-      expect(pres12_a.last_10.last).to eq last_game
+      expect(pres12_a.last_n(10).length).to eq 10
+      expect(pres12_a.last_n(10)).not_to include early_game
+      expect(pres12_a.last_n(10)).not_to include not_played_yet
+      expect(pres12_a.last_n(10).last).to eq last_game
     end
 
     it 'shows the last 10 games' do
-      expect(pres12_a.show_last_10.length).to eq 10
-      expect(pres12_a.show_last_10).to eq 'LLLLLWOWOW'
+      expect(pres12_a.show_last_n(10).length).to eq 10
+      expect(pres12_a.show_last_n(10)).to eq 'LLLLLWOWOW'
     end
   end
 end

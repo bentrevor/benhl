@@ -39,7 +39,7 @@ table {
 
     td, th {
         border: 1px solid black;
-        padding: 0.5rem;
+        padding: 0.3rem;
     }
 }
 
@@ -47,15 +47,9 @@ table {
     text-align: center;
 }
 
-.last_10 {
-    width: 2rem;
-    height: 2rem;
-    display: inline;
-}
-
-.last_10_w {background: $green;}
-.last_10_l {background: $red}
-.last_10_o {background: $light-red}
+.last_n_w {background: $green;}
+.last_n_l {background: $red}
+.last_n_o {background: $light-red}
 
 /* tablesort */
 th.sort-header::-moz-selection { background:transparent; }

@@ -43,12 +43,14 @@ class TeamStandingsPresenter
     @goal_diff ||= goals_for - goals_against
   end
 
-  def last_10
-    @last_10 ||= games.where('datetime IS NOT NULL').sort_by(&:datetime).last(10)
+  def last_n(n)
+    @last_n ||= {}
+    @last_n[n.to_s] ||= games.where('datetime IS NOT NULL').sort_by(&:datetime).select(&:played?).last(n)
   end
 
-  def show_last_10
-    @show_last_10 ||= last_10.map {|g| letter_for(g)}.join
+  def show_last_n(n)
+    @show_last_n ||= {}
+    @show_last_n[n.to_s] ||= last_n(n).map {|g| letter_for(g)}.join
   end
 
   private
