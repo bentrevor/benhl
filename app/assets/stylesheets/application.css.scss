@@ -13,3 +13,33 @@
  *= require_tree .
  *= require_self
  */
+
+$light-gray: #ccc;
+$gray: #777;
+
+.content_container {
+    background: $light-gray;
+    margin: 0 auto;
+    padding: 2rem;
+    width: 80%;
+
+    box-shadow: 0px 0px 100px black;
+}
+
+body {
+    background: $gray;
+}
+
+table {
+    text-align: center;
+    margin: 0 auto;
+
+    td, th {
+        border: 1px solid black;
+        padding: 0.3rem;
+    }
+}
+
+.division_title, .conference_title {
+    text-align: center;
+}

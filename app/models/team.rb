@@ -29,11 +29,27 @@ class Team < ActiveRecord::Base
   end
 
   def ot_losses
-    @losses ||= total_losses.where(status_id: [Game::STATUS_IDS[:overtime], Game::STATUS_IDS[:shootout]]).length
+    @ot_losses ||= total_losses.where(status_id: [Game::STATUS_IDS[:overtime], Game::STATUS_IDS[:shootout]]).length
   end
 
   def record
     "#{wins}-#{losses}-#{ot_losses}"
+  end
+
+  def points
+    (wins * 2) + ot_losses
+  end
+
+  def goals_for
+    home_games.map(&:home_score).sum + away_games.map(&:away_score).sum
+  end
+
+  def goals_against
+    home_games.map(&:away_score).sum + away_games.map(&:home_score).sum
+  end
+
+  def goal_diff
+    goals_for - goals_against
   end
 
   private

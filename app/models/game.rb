@@ -11,6 +11,10 @@ class Game < ActiveRecord::Base
     shootout: 4,
   }
 
+  STATUS_IDS.each do |status, id|
+    scope status, ->{ where(status_id: id) }
+  end
+
   def winner
     if home_score > away_score
       home_team

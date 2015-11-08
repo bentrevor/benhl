@@ -1,0 +1,28 @@
+
+<h3 class="division_title"><%= division_name %></h3>
+
+<table id="<%= division_name.split[0].downcase %>_table">
+  <tr class="no-sort">
+    <th>Name</th>
+    <th>Points</th>
+    <th>Wins</th>
+    <th>Losses</th>
+    <th>OT Losses</th>
+    <th>Goals For</th>
+    <th>Goals Against</th>
+    <th>Goal Diff</th>
+  </tr>
+
+  <% teams.each do |team| %>
+    <tr>
+      <td><%= "#{team.city} #{team.name}" %></td>
+      <td><%= team.points %></td>
+      <td><%= team.wins %></td>
+      <td><%= team.losses %></td>
+      <td><%= team.ot_losses %></td>
+      <td><%= team.goals_for %></td>
+      <td><%= team.goals_against %></td>
+      <td><%= team.goal_diff %></td>
+    </tr>
+  <% end %>
+</table>

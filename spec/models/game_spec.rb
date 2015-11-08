@@ -44,5 +44,9 @@ describe Game do
 
       expect(game.played?).to be true
     end
+
+    it 'has a scope for each status' do
+      expect(described_class.unplayed).to include game
+    end
   end
 end
