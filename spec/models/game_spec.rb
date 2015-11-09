@@ -49,4 +49,26 @@ describe Game do
       expect(described_class.unplayed).to include game
     end
   end
+
+  it 'can finish itself' do
+    game.finish('4-1')
+
+    expect(game.away_score).to be 4
+    expect(game.home_score).to be 1
+    expect(game.status).to eq :finished
+  end
+
+  it 'can finish itself in OT' do
+    game.finish('4-1(OT)')
+
+    expect(game.away_score).to be 4
+    expect(game.home_score).to be 1
+    expect(game.status).to eq :overtime
+
+    game.finish('2-3(SO)')
+
+    expect(game.away_score).to be 2
+    expect(game.home_score).to be 3
+    expect(game.status).to eq :shootout
+  end
 end

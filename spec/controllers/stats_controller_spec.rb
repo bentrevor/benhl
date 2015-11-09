@@ -23,4 +23,16 @@ describe StatsController do
 
     expect(assigns(:season)).to eq [2012,2013]
   end
+
+  it 'uses 10 as a default last_n number' do
+    get :standings, season: 2012
+
+    expect(assigns(:last_n)).to eq 10
+  end
+
+  it 'gets the last_n number from the url' do
+    get :standings, season: 2012, last_n: 20
+
+    expect(assigns(:last_n)).to eq 20
+  end
 end

@@ -1,3 +1,3 @@
 Rails.application.routes.draw do
-  get '/standings/:season', to: 'stats#standings'
+  get '/standings/:season(/:last_n)', to: 'stats#standings'
 end

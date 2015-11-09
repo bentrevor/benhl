@@ -4,6 +4,11 @@ class StatsController < ApplicationController
 
   def standings
     season = params[:season].to_i
+    @last_n = if params[:last_n]
+                params[:last_n].to_i
+              else
+                10
+              end
 
     @teams = {}
 

@@ -35,6 +35,22 @@ class Game < ActiveRecord::Base
     status_id > 1
   end
 
+  def finish(score)
+    new_away_score = score.split('-')[0].to_i
+    new_home_score = score.split('-')[1].to_i
+    new_status_id = if score.index 'SO'
+                      4
+                    elsif score.index 'OT'
+                      3
+                    else
+                      2
+                    end
+
+    update_attributes({ home_score: new_home_score,
+                        away_score: new_away_score,
+                        status_id: new_status_id })
+  end
+
   private
 
   def set_scores_and_status

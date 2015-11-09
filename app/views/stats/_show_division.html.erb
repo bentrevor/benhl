@@ -1,5 +1,4 @@
 
-<% last_n = 10 %>
 <h3 class="division_title"><%= division_name %></h3>
 
 <table id="<%= division_name.split[0].downcase %>_table">
@@ -12,7 +11,7 @@
     <th>Goals For</th>
     <th>Goals Against</th>
     <th>Goal Diff</th>
-    <th colspan="<%= last_n %>">Last <%= last_n %></th>
+    <th colspan="<%= @last_n %>">Last <%= @last_n %></th>
   </tr>
 
   <% teams.each do |team| %>
@@ -25,7 +24,7 @@
       <td><%= team.goals_for %></td>
       <td><%= team.goals_against %></td>
       <td><%= team.goal_diff %></td>
-      <% team.show_last_n(last_n).split('').each do |l| %>
+      <% team.show_last_n(@last_n).split('').each do |l| %>
         <td class="last_n last_n_<%= l.downcase %>"><strong><%= l %><strong></td>
       <% end %>
     </tr>
