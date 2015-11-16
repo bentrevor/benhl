@@ -3,15 +3,17 @@
 class GameFinisher
   class << self
     def finish(game_str)
-      Game.create(
-        home_team: home_team_from(game_str),
-        away_team: away_team_from(game_str),
+      game = Game.find_by(datetime: Date.today,
+                          home_team: home_team_from(game_str),
+                          away_team: away_team_from(game_str))
+
+      game.update_attributes(
         home_score: home_score_from(game_str),
         away_score: away_score_from(game_str),
         status_id: status_id_from(game_str),
-        season: 2015,
-        datetime: Date.today,
       )
+
+      game
     end
 
     def home_team_from(game_str)
@@ -31,14 +33,13 @@ class GameFinisher
     end
 
     def status_id_from(game_str)
-      if game_str.split.length == 6
+      case game_str.split[6]
+      when nil
         Game::STATUS_IDS[:finished]
-      else
-        if game_str.split.last == 'OT'
-          Game::STATUS_IDS[:overtime]
-        else
-          Game::STATUS_IDS[:shootout]
-        end
+      when 'OT'
+        Game::STATUS_IDS[:overtime]
+      when 'SO'
+        Game::STATUS_IDS[:shootout]
       end
     end
   end

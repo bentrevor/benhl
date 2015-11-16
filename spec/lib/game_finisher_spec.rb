@@ -4,32 +4,27 @@ describe GameFinisher do
   let!(:edm) { Team.create(city: 'Edmonton', abbrev: 'edm') }
   let!(:lak) { Team.create(city: 'Los Angeles', abbrev: 'lak') }
 
-  let(:created_game) { described_class.finish('FINAL: EDM (3) - LAK (4)') }
+  let!(:game) { Game.create(home_team: lak, away_team: edm, datetime: Date.today) }
 
-  it 'creates a game from a string' do
+  let(:finished_game) { described_class.finish('FINAL: EDM (3) - LAK (4)') }
+
+  it 'updates an unfinished game that already exists' do
     expect {
       described_class.finish('FINAL: EDM (3) - LAK (4)')
-    }.to change {Game.count}.by 1
+    }.to change {Game.count}.by 0
   end
 
-  it 'sets the teams/scores of the created game' do
-    expect(created_game.home_team).to eq lak
-    expect(created_game.home_score).to eq 4
-    expect(created_game.away_team).to eq edm
-    expect(created_game.away_score).to eq 3
+  it "finds the game with today's date and the two teams listed" do
+    expect(finished_game.id).to eq game.id
   end
 
-  it 'uses today for the datetime' do
-    expect(created_game.datetime).to eq Date.today
-  end
-
-  it 'uses the 2015 season' do
-    # I'll be using a real API by next season
-    expect(created_game.season).to eq 2015
+  it 'sets the scores of the created game' do
+    expect(finished_game.home_score).to eq 4
+    expect(finished_game.away_score).to eq 3
   end
 
   it 'sets the status based on the last word' do
-    expect(created_game.status).to eq :finished
+    expect(finished_game.status).to eq :finished
 
     ot_game = described_class.finish('FINAL: EDM (3) - LAK (4) OT')
     so_game = described_class.finish('FINAL: EDM (3) - LAK (4) SO')
