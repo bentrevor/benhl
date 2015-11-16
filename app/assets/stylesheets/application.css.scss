@@ -16,7 +16,8 @@
 
 $green: #3f3;
 $red: #d22;
-$light_red: #e66;
+$light-red: #e66;
+$lightest-gray: #eee;
 $light-gray: #ccc;
 $gray: #777;
 
@@ -38,8 +39,18 @@ table {
     margin: 0 auto;
 
     td, th {
+        background: $lightest-gray;
         border: 1px solid black;
         padding: 0.3rem;
+    }
+
+    .name_column {
+        width: 200px;
+        text-align: right;
+    }
+
+    .divider_row {
+        background: black;
     }
 }
 

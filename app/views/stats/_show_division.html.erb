@@ -3,8 +3,10 @@
 
 <table id="<%= division_name.split[0].downcase %>_table">
   <tr class="no-sort">
-    <th>Name</th>
-    <th>Points</th>
+    <th class="name_column">Name</th>
+    <th>Record</th>
+    <th>Played</th>
+    <th class="sort-default">Points</th>
     <th>Wins</th>
     <th>Losses</th>
     <th>OT Losses</th>
@@ -16,7 +18,9 @@
 
   <% teams.each do |team| %>
     <tr>
-      <td><%= "#{team.city} #{team.name}" %></td>
+      <td class="name_column"><%= "#{team.city} #{team.name}" %></td>
+      <td><%= "#{team.wins} - #{team.losses + team.ot_losses}(#{team.ot_losses})" %></td>
+      <td><%= team.wins + team.losses + team.ot_losses %></td>
       <td><%= team.points %></td>
       <td><%= team.wins %></td>
       <td><%= team.losses %></td>
@@ -24,9 +28,55 @@
       <td><%= team.goals_for %></td>
       <td><%= team.goals_against %></td>
       <td><%= team.goal_diff %></td>
-      <% team.show_last_n(@last_n).split('').each do |l| %>
-        <td class="last_n last_n_<%= l.downcase %>"><strong><%= l %><strong></td>
+      <td><% team.show_last_n(@last_n).split('').each do |l| %></td>
+        <td class="last_n last_n_<%= l.downcase %>"><strong><%= l %></strong></td>
       <% end %>
     </tr>
   <% end %>
+
+  <% total_wins = teams.map(&:wins).sum %>
+  <% total_losses = teams.map(&:losses).sum %>
+  <% total_ot_losses = teams.map(&:ot_losses).sum %>
+
+  <tr class="no-sort divider_row">
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr class="no-sort">
+    <td>Totals:</td>
+    <td><%= "#{total_wins} - #{total_losses + total_ot_losses}(#{total_ot_losses})" %></td>
+    <td><%= total_wins + total_losses + total_ot_losses %></td>
+    <td><%= teams.map(&:points).sum %></td>
+    <td><%= total_wins %></td>
+    <td><%= total_losses %></td>
+    <td><%= total_ot_losses %></td>
+    <td><%= teams.map(&:goals_for).sum %></td>
+    <td><%= teams.map(&:goals_against).sum %></td>
+    <td><%= teams.map(&:goal_diff).sum %></td>
+  </tr>
+
+  <% num_teams = teams.length.to_f %>
+
+  <tr class="no-sort">
+    <td>Totals per team:</td>
+    <td><%= "#{(total_wins/num_teams).round(1)} - #{((total_losses + total_ot_losses)/num_teams).round(1)}(#{(total_ot_losses/num_teams).round(1)})" %></td>
+    <td><%= ((total_wins + total_losses + total_ot_losses)/num_teams).round(1) %></td>
+    <td><%= ((teams.map(&:points).sum)/num_teams).round(1) %></td>
+    <td><%= (total_wins/num_teams).round(1) %></td>
+    <td><%= (total_losses/num_teams).round(1) %></td>
+    <td><%= (total_ot_losses/num_teams).round(1) %></td>
+    <td><%= ((teams.map(&:goals_for).sum)/num_teams).round(1) %></td>
+    <td><%= ((teams.map(&:goals_against).sum)/num_teams).round(1) %></td>
+    <td><%= ((teams.map(&:goal_diff).sum)/num_teams).round(1) %></td>
+  </tr>
+
 </table>

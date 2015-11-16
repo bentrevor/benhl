@@ -14,4 +14,8 @@ class Team < ActiveRecord::Base
   def division
     DIVISION_IDS.invert[division_id]
   end
+
+  def self.[](abbrev)
+    find_by(abbrev: abbrev)
+  end
 end
