@@ -10,12 +10,14 @@ describe StatsController do
   it 'shows all teams using TeamStandingsPresenters' do
     3.times {|n| Team.create(name: "team#{n}", division_id: n + 1) }
 
-    get :standings, season: 2012
+    get :standings, season: 2012, start_date: '1/2/2015', end_date: '3/4/2015'
 
     pres = assigns(:teams)[:atlantic].first
 
     expect(pres).to be_a TeamStandingsPresenter
     expect(pres.season).to be 2012
+    expect(pres.start_date).to eq '1/2/2015'
+    expect(pres.end_date).to eq '3/4/2015'
   end
 
   it 'shows standings for the given year' do

@@ -60,37 +60,45 @@ describe TeamStandingsPresenter do
     expect(pres12_b.goal_diff).to eq 2
   end
 
-  describe 'last 10' do
-    let!(:early_game) { Game.create(season: 2012, datetime: Date.parse("Oct 1, 2014"), status_id: 2,
+  it 'only uses games from the current season' do
+    expect(pres12_a.goal_diff).to eq -2
+    expect(pres12_b.goal_diff).to eq 2
+
+    expect(pres14_a.goal_diff).to eq 8
+    expect(pres14_b.goal_diff).to eq -8
+  end
+
+  context 'filtering games by date' do
+    let!(:early_game) { Game.create(season: 2012, datetime: Date.parse("Oct 1, 2012"), status_id: 2,
                                     home_team: team_b, home_score: 2,
                                     away_team: team_a, away_score: 1) }
 
-    let!(:ot_win) { Game.create(season: 2012, datetime: Date.parse("Oct 27, 2014"), status_id: 3,
+    let!(:ot_win) { Game.create(season: 2012, datetime: Date.parse("Oct 27, 2012"), status_id: 3,
                                  home_team: team_b, home_score: 1,
                                  away_team: team_a, away_score: 2) }
 
-    let!(:ot_loss) { Game.create(season: 2012, datetime: Date.parse("Oct 28, 2014"), status_id: 3,
+    let!(:ot_loss) { Game.create(season: 2012, datetime: Date.parse("Oct 28, 2012"), status_id: 3,
                                  home_team: team_b, home_score: 2,
                                  away_team: team_a, away_score: 1) }
 
-    let!(:so_win) { Game.create(season: 2012, datetime: Date.parse("Oct 29, 2014"), status_id: 4,
+    let!(:so_win) { Game.create(season: 2012, datetime: Date.parse("Oct 29, 2012"), status_id: 4,
                                  home_team: team_b, home_score: 1,
                                  away_team: team_a, away_score: 2) }
 
-    let!(:so_loss) { Game.create(season: 2012, datetime: Date.parse("Oct 30, 2014"), status_id: 4,
+    let!(:so_loss) { Game.create(season: 2012, datetime: Date.parse("Oct 30, 2012"), status_id: 4,
                                 home_team: team_b, home_score: 2,
                                 away_team: team_a, away_score: 1) }
 
-    let!(:last_game) { Game.create(season: 2012, datetime: Date.parse("Oct 31, 2014"), status_id: 2,
+    let!(:last_game) { Game.create(season: 2012, datetime: Date.parse("Oct 31, 2012"), status_id: 2,
                                    home_team: team_b, home_score: 1,
                                    away_team: team_a, away_score: 10) }
 
-    let!(:not_played_yet) { Game.create(season: 2012, datetime: Date.parse("Nov 10, 2014"), status_id: 1,
+    let!(:not_played_yet) { Game.create(season: 2012, datetime: Date.parse("Nov 10, 2012"), status_id: 1,
                                         home_team: team_b, away_team: team_a) }
 
     before do
       10.times do |i|
-        Game.create(season: 2012, datetime: Date.parse("Oct #{i + 2}, 2014"), status_id: 2,
+        Game.create(season: 2012, datetime: Date.parse("Oct #{i + 2}, 2012"), status_id: 2,
                     home_team: team_b, home_score: 2,
                     away_team: team_a, away_score: 1)
       end
@@ -106,6 +114,19 @@ describe TeamStandingsPresenter do
     it 'shows the last 10 games' do
       expect(pres12_a.show_last_n(10).length).to eq 10
       expect(pres12_a.show_last_n(10)).to eq 'LLLLLWOWOW'
+    end
+
+    it 'sets the last_n to 100 when a date range is provided' do
+      presenter = described_class.new(team_a, 2012, '5/10/2012', '10/10/2012')
+
+      expect(presenter.last_n(0).length).to eq 6
+    end
+
+    it 'can handle a custom date range' do
+      presenter = described_class.new(team_a, 2012, '5/10/2012', '10/10/2012')
+
+      # team_a loses every game
+      expect(presenter.losses).to eq 6
     end
   end
 end

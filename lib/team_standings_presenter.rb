@@ -1,9 +1,11 @@
 class TeamStandingsPresenter
-  attr_accessor :team, :season
+  attr_accessor :team, :season, :start_date, :end_date
 
-  def initialize(team, season)
+  def initialize(team, season, start_date=nil, end_date=nil)
     self.team = team
     self.season = season
+    self.start_date = start_date
+    self.end_date = end_date
   end
 
   def city
@@ -44,6 +46,8 @@ class TeamStandingsPresenter
   end
 
   def last_n(n)
+    n = 100 if start_date
+
     @last_n ||= {}
     @last_n[n.to_s] ||= games.where('datetime IS NOT NULL').sort_by(&:datetime).select(&:played?).last(n)
   end
@@ -81,7 +85,15 @@ class TeamStandingsPresenter
   end
 
   def games
-    @games ||= Game.where(season: season).where("home_team_id = #{team.id} OR away_team_id = #{team.id}")
+    if start_date
+      query_str = "(home_team_id = #{team.id} OR away_team_id = #{team.id}) AND (datetime >= ? AND datetime <= ?)"
+      args = [Date.parse(start_date), Date.parse(end_date)]
+    else
+      query_str = "home_team_id = #{team.id} OR away_team_id = #{team.id}"
+      args = []
+    end
+
+    @games ||= Game.where(season: season).where(query_str, *args)
   end
 
   def game_is_won?(game)

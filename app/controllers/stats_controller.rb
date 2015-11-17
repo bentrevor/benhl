@@ -13,7 +13,7 @@ class StatsController < ApplicationController
     @teams = {}
 
     [:atlantic, :metropolitan, :central, :pacific].each do |division|
-      @teams[division] = Team.send(division).map {|t| TeamStandingsPresenter.new(t, season)}
+      @teams[division] = Team.send(division).map {|team| TeamStandingsPresenter.new(team, season, params[:start_date], params[:end_date])}
     end
 
     @season = [season, season + 1]
