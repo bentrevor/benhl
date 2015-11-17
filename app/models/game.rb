@@ -51,7 +51,18 @@ class Game < ActiveRecord::Base
                         status_id: new_status_id })
   end
 
+  def show
+    "#{away_team.name}(#{away_score}) at #{home_team.name}(#{home_score})" + status_str
+  end
+
   private
+
+  def status_str
+    {
+      overtime: ' OT',
+      shootout: ' S/O',
+    }[status] || ''
+  end
 
   def set_scores_and_status
     self.home_score ||= 0

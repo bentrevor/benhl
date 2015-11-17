@@ -71,4 +71,22 @@ describe Game do
     expect(game.home_score).to be 3
     expect(game.status).to eq :shootout
   end
+
+  describe '#show' do
+    let(:game) { game = described_class.create(home_team: home_team,
+                                               away_team: away_team,
+                                               home_score: 1,
+                                               away_score: 2,
+                                               status_id: Game::STATUS_IDS[:finished]) }
+
+    it 'can be human-readable' do
+      expect(game.show).to eq 'away(2) at home(1)'
+    end
+
+    it 'shows the status for ot or shootouts' do
+      game.status = :overtime
+
+      expect(game.show).to eq 'away(2) at home(1) OT'
+    end
+  end
 end

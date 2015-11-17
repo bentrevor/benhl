@@ -2,18 +2,20 @@
 # FINAL: EDM (3) - LAK (4) OT
 class GameFinisher
   class << self
-    def finish(game_str)
-      game = Game.find_by(datetime: Date.today,
+    def finish(game_str, date = Date.yesterday)
+      game = Game.find_by(datetime: date,
                           home_team: home_team_from(game_str),
                           away_team: away_team_from(game_str))
 
-      game.update_attributes(
-        home_score: home_score_from(game_str),
-        away_score: away_score_from(game_str),
-        status_id: status_id_from(game_str),
-      )
+      if !game.played?
+        game.update_attributes(
+          home_score: home_score_from(game_str),
+          away_score: away_score_from(game_str),
+          status_id: status_id_from(game_str),
+        )
 
-      game
+        game
+      end
     end
 
     def home_team_from(game_str)
@@ -38,7 +40,7 @@ class GameFinisher
         Game::STATUS_IDS[:finished]
       when 'OT'
         Game::STATUS_IDS[:overtime]
-      when 'SO'
+      when 'S/O'
         Game::STATUS_IDS[:shootout]
       end
     end
