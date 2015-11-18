@@ -1,7 +1,6 @@
+<h3 class="title"><%= title %></h3>
 
-<h3 class="division_title"><%= division_name %></h3>
-
-<table id="<%= division_name.split[0].downcase %>_table">
+<table>
   <tr class="no-sort">
     <th class="name_column">Name</th>
     <th>Record</th>
@@ -17,21 +16,21 @@
   </tr>
 
   <% teams.each do |team| %>
-    <tr>
-      <td class="name_column"><%= "#{team.city} #{team.name}" %></td>
-      <td><%= "#{team.wins} - #{team.losses + team.ot_losses}(#{team.ot_losses})" %></td>
-      <td><%= team.wins + team.losses + team.ot_losses %></td>
-      <td><%= team.points %></td>
-      <td><%= team.wins %></td>
-      <td><%= team.losses %></td>
-      <td><%= team.ot_losses %></td>
-      <td><%= team.goals_for %></td>
-      <td><%= team.goals_against %></td>
-      <td><%= team.goal_diff %></td>
-      <td><% team.show_last_n(@last_n).split('').each do |l| %></td>
-        <td class="last_n last_n_<%= l.downcase %>"><strong><%= l %></strong></td>
-      <% end %>
-    </tr>
+  <tr>
+    <td class="name_column"><%= "#{team.city} #{team.name}" %></td>
+    <td><%= "#{team.wins} - #{team.losses + team.ot_losses}(#{team.ot_losses})" %></td>
+    <td><%= team.wins + team.losses + team.ot_losses %></td>
+    <td><%= team.points %></td>
+    <td><%= team.wins %></td>
+    <td><%= team.losses %></td>
+    <td><%= team.ot_losses %></td>
+    <td><%= team.goals_for %></td>
+    <td><%= team.goals_against %></td>
+    <td><%= team.goal_diff %></td>
+    <td><% team.show_last_n(@last_n).split('').each do |l| %></td>
+    <td class="last_n last_n_<%= l.downcase %>"><strong><%= l %></strong></td>
+    <% end %>
+  </tr>
   <% end %>
 
   <% total_wins = teams.map(&:wins).sum %>

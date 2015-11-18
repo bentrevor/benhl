@@ -12,6 +12,7 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require underscore
 //= require tablesort.min
 //= require tablesort.number
 //= require_tree .

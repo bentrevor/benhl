@@ -17,10 +17,9 @@
 
   <script type="text/javascript">
     $(document).ready(function() {
-      new Tablesort($('#atlantic_table')[0], {descending: true});
-      new Tablesort($('#metropolitan_table')[0], {descending: true});
-      new Tablesort($('#central_table')[0], {descending: true});
-      new Tablesort($('#pacific_table')[0], {descending: true});
+      _.each($('table'), function(table) {
+        new Tablesort(table, {descending: true});
+      });
     });
   </script>
 
