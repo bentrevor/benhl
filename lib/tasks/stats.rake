@@ -17,4 +17,50 @@ namespace :stats do
       end
     end
   end
+
+  desc "fetch the results of unfinished games"
+  task :seed_old_season => :environment do
+    seasons = ['20032004',
+               '20052006',
+               '20062007',
+               '20072008',
+               '20082009',
+               '20092010',
+               '20102011',
+               '20112012',
+               '20122013',
+               '20132014',
+               '20142015']
+
+    created_games = {}
+
+    seasons.each do |season|
+      created_games[season] = []
+
+      uri = open("http://www.nhl.com/ice/schedulebyseason.htm?season=#{season}")
+      page = Nokogiri::HTML(uri)
+
+      trs = page.css('tr')
+
+      game_trs = trs.select { |tr| tr.text.include?('FINAL:')}
+
+      game_trs.each_with_index do |game, i|
+        print '.' if i % 100 == 0
+        next if !(GameFinisher.home_team_from(game.css('.tvInfo').text) &&
+                  GameFinisher.away_team_from(game.css('.tvInfo').text))
+
+        # the date looks like "Sun Jan 25, 2015Sun Jan 25, 2015"
+        date = halve(game.css('.date').text)
+
+        # TODO
+        # GameCreator.create(game.css('.tvInfo').text, date)
+      end
+    end
+
+    binding.pry
+  end
+end
+
+def halve(str)
+  str[0..(str.length/2)-1]
 end
