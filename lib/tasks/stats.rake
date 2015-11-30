@@ -3,64 +3,93 @@ require 'open-uri'
 require './lib/game_finisher'
 
 namespace :stats do
-  desc "fetch the results of unfinished games"
+  desc "fetch the results and update finished games"
   task :update_games => :environment do
-    unfinished_games = Game.where(season: 2015, status_id: 1).where('datetime < ?', Date.today)
-    dates = unfinished_games.map(&:datetime).uniq.map { |date| date.strftime('%m/%d/%Y') }
+    season = 2015
+    unfinished_games = Game.where(season: season, status_id: 1).where('datetime < ?', Date.today)
 
-    dates.each do |date|
-      uri = open("http://www.nhl.com/ice/schedulebyday.htm?date=#{date}&season=20152016")
-      page = Nokogiri::HTML(uri)
+    if unfinished_games.empty?
+      puts "all games are up to date for the #{season} season"
+    else
+      dates = unfinished_games.map(&:datetime).uniq.map { |date| date.strftime('%m/%d/%Y') }
 
-      page.css('.tvInfo').each do |game|
-        GameFinisher.finish(game.text, date)
+      puts "finishing #{unfinished_games.count} games from #{dates.first} to #{dates.last}"
+      dates.each_with_index do |date, i|
+        print '.' if i % 50 == 0
+        uri = open("http://www.nhl.com/ice/schedulebyday.htm?date=#{date}")
+        page = Nokogiri::HTML(uri)
+
+        page.css('.tvInfo').each do |game|
+          GameFinisher.finish(game.text, date)
+        end
       end
+      puts 'done'
     end
   end
 
-  desc "fetch the results of unfinished games"
+  desc "seed unfinished games for 2015-2016 season"
   task :seed_old_season => :environment do
-    seasons = ['20032004',
-               '20052006',
-               '20062007',
-               '20072008',
-               '20082009',
-               '20092010',
-               '20102011',
-               '20112012',
-               '20122013',
-               '20132014',
-               '20142015']
+    season = 2015
+    uri = open("http://www.nhl.com/ice/schedulebyseason.htm?season=#{season}#{season+1}")
+    page = Nokogiri::HTML(uri)
 
-    created_games = {}
+    trs = page.css('tr')
+    game_trs = trs.select { |tr| tr.text.include?('FINAL:') || tr.text.include?('TICKETS') }
 
-    seasons.each do |season|
-      created_games[season] = []
+    created_game_count = 0
+    game_trs.each_with_index do |game, i|
+      print '.' if i % 50 == 0
 
-      uri = open("http://www.nhl.com/ice/schedulebyseason.htm?season=#{season}")
-      page = Nokogiri::HTML(uri)
-
-      trs = page.css('tr')
-
-      game_trs = trs.select { |tr| tr.text.include?('FINAL:')}
-
-      game_trs.each_with_index do |game, i|
-        print '.' if i % 100 == 0
-        next if !(GameFinisher.home_team_from(game.css('.tvInfo').text) &&
-                  GameFinisher.away_team_from(game.css('.tvInfo').text))
-
-        # the date looks like "Sun Jan 25, 2015Sun Jan 25, 2015"
-        date = halve(game.css('.date').text)
-
-        # TODO
-        # GameCreator.create(game.css('.tvInfo').text, date)
+      if home_team = find_team_from_str(game.css('.teamName')[1].text) # filters out all-star games
+        created_game_count += 1
+        Game.create(
+          home_team: home_team,
+          away_team: find_team_from_str(game.css('.teamName')[0].text),
+          datetime: Date.parse(halve(game.css('.date').text)),
+          season: season,
+        )
       end
     end
-
-    binding.pry
+    puts "created #{created_game_count} games for #{season} season"
   end
 end
 
 def halve(str)
   str[0..(str.length/2)-1]
+end
+
+# won't work before 2014 because Phoenix moved to Arizona
+def find_team_from_str(str)
+  {
+    "Anaheim" =>      Team['ana'],
+    "Arizona" =>      Team['ari'],
+    "Boston" =>       Team['bos'],
+    "Buffalo" =>      Team['buf'],
+    "Calgary" =>      Team['cgy'],
+    "Carolina" =>     Team['car'],
+    "Chicago" =>      Team['chi'],
+    "Colorado" =>     Team['col'],
+    "Columbus" =>     Team['cbj'],
+    "Dallas" =>       Team['dal'],
+    "Detroit" =>      Team['det'],
+    "Edmonton" =>     Team['edm'],
+    "Florida" =>      Team['fla'],
+    "Los Angeles" =>  Team['lak'],
+    "Minnesota" =>    Team['min'],
+    "Montréal" =>     Team['mtl'],
+    "NY Islanders" => Team['nyi'],
+    "NY Rangers" =>   Team['nyr'],
+    "Nashville" =>    Team['nsh'],
+    "New Jersey" =>   Team['njd'],
+    "Ottawa" =>       Team['ott'],
+    "Philadelphia" => Team['phi'],
+    "Pittsburgh" =>   Team['pit'],
+    "San Jose" =>     Team['sjs'],
+    "St. Louis" =>    Team['stl'],
+    "Tampa Bay" =>    Team['tbl'],
+    "Toronto" =>      Team['tor'],
+    "Vancouver" =>    Team['van'],
+    "Washington" =>   Team['wsh'],
+    "Winnipeg" =>     Team['wpg']
+  }[str]
 end
