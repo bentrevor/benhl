@@ -19,6 +19,6 @@ class Team < ActiveRecord::Base
   end
 
   def self.[](abbrev)
-    find_by(abbrev: abbrev)
+    find_by(abbrev: abbrev.downcase)
   end
 end

@@ -3,9 +3,17 @@
 class GameFinisher
   class << self
     def finish(game_str, date = Date.yesterday)
+      home_team = home_team_from(game_str)
+      away_team = away_team_from(game_str)
+
+      raise StandardError, 'bogus home team' unless home_team
+      raise StandardError, 'bogus away team' unless away_team
+
       game = Game.find_by(datetime: date,
-                          home_team: home_team_from(game_str),
-                          away_team: away_team_from(game_str))
+                          home_team: home_team,
+                          away_team: away_team)
+
+      raise StandardError, "couldn't find a game between those teams on that date" unless game
 
       if !game.played?
         game.update_attributes(
@@ -19,7 +27,7 @@ class GameFinisher
     end
 
     def home_team_from(game_str)
-      Team[game_str.split[4].downcase]
+      Team[game_str.split[4]]
     end
 
     def home_score_from(game_str)
@@ -27,7 +35,7 @@ class GameFinisher
     end
 
     def away_team_from(game_str)
-      Team[game_str.split[1].downcase]
+      Team[game_str.split[1]]
     end
 
     def away_score_from(game_str)

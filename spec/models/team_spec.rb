@@ -12,10 +12,14 @@ describe Team do
     expect(described_class.central_division).to include other_team
   end
 
-  it 'can be looked up by abbrev' do
+  it 'can be looked up by case-insensitive abbrev' do
     expect(Team['aaa']).to eq team
     expect(Team['bbb']).to eq other_team
     expect(Team['ccc']).to be nil
+
+    expect(Team['AAA']).to eq team
+    expect(Team['bBB']).to eq other_team
+    expect(Team['ccC']).to be nil
   end
 
   it 'has a scope for conference' do

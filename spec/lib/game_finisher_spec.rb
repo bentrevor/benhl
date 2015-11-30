@@ -60,4 +60,12 @@ describe GameFinisher do
     expect(game.away_score).to eq 3
     expect(game.home_score).to eq 4
   end
+
+  it 'raises an error for unfound games/teams' do
+    expect { described_class.finish 'FINAL: LAK (0) - bogus (0)' }.to raise_error StandardError, 'bogus home team'
+    expect { described_class.finish 'FINAL: bogus (0) - LAK (0)' }.to raise_error StandardError, 'bogus away team'
+    expect {
+      described_class.finish('FINAL: EDM (3) - LAK (4)', game.datetime - 10.days)
+    }.to raise_error StandardError, "couldn't find a game between those teams on that date"
+  end
 end

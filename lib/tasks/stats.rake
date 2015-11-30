@@ -15,19 +15,20 @@ namespace :stats do
 
       puts "finishing #{unfinished_games.count} games from #{dates.first} to #{dates.last}"
       dates.each_with_index do |date, i|
-        print '.' if i % 50 == 0
+        print '.' if i % 5 == 0
         uri = open("http://www.nhl.com/ice/schedulebyday.htm?date=#{date}")
         page = Nokogiri::HTML(uri)
 
         page.css('.tvInfo').each do |game|
-          GameFinisher.finish(game.text, date)
+          game_str = game.text.gsub('ATL', 'WPG').gsub('PHX', 'ARI')
+          GameFinisher.finish(game_str, date)
         end
       end
       puts 'done'
     end
   end
 
-  desc "seed unfinished games for 2015-2016 season"
+  desc "create unfinished games for old seasons"
   task :seed_old_season => :environment do
     season = 2015
     uri = open("http://www.nhl.com/ice/schedulebyseason.htm?season=#{season}#{season+1}")
@@ -58,38 +59,39 @@ def halve(str)
   str[0..(str.length/2)-1]
 end
 
-# won't work before 2014 because Phoenix moved to Arizona
 def find_team_from_str(str)
   {
-    "Anaheim" =>      Team['ana'],
-    "Arizona" =>      Team['ari'],
-    "Boston" =>       Team['bos'],
-    "Buffalo" =>      Team['buf'],
-    "Calgary" =>      Team['cgy'],
-    "Carolina" =>     Team['car'],
-    "Chicago" =>      Team['chi'],
-    "Colorado" =>     Team['col'],
-    "Columbus" =>     Team['cbj'],
-    "Dallas" =>       Team['dal'],
-    "Detroit" =>      Team['det'],
-    "Edmonton" =>     Team['edm'],
-    "Florida" =>      Team['fla'],
-    "Los Angeles" =>  Team['lak'],
-    "Minnesota" =>    Team['min'],
-    "Montréal" =>     Team['mtl'],
+    "Anaheim"      => Team['ana'],
+    "Arizona"      => Team['ari'],
+    "Phoenix"      => Team['ari'], # Phoenix Coyotes -> Arizona Coyotes in 2014-2015
+    "Boston"       => Team['bos'],
+    "Buffalo"      => Team['buf'],
+    "Calgary"      => Team['cgy'],
+    "Carolina"     => Team['car'],
+    "Chicago"      => Team['chi'],
+    "Colorado"     => Team['col'],
+    "Columbus"     => Team['cbj'],
+    "Dallas"       => Team['dal'],
+    "Detroit"      => Team['det'],
+    "Edmonton"     => Team['edm'],
+    "Florida"      => Team['fla'],
+    "Los Angeles"  => Team['lak'],
+    "Minnesota"    => Team['min'],
+    "Montréal"     => Team['mtl'],
     "NY Islanders" => Team['nyi'],
-    "NY Rangers" =>   Team['nyr'],
-    "Nashville" =>    Team['nsh'],
-    "New Jersey" =>   Team['njd'],
-    "Ottawa" =>       Team['ott'],
+    "NY Rangers"   => Team['nyr'],
+    "Nashville"    => Team['nsh'],
+    "New Jersey"   => Team['njd'],
+    "Ottawa"       => Team['ott'],
     "Philadelphia" => Team['phi'],
-    "Pittsburgh" =>   Team['pit'],
-    "San Jose" =>     Team['sjs'],
-    "St. Louis" =>    Team['stl'],
-    "Tampa Bay" =>    Team['tbl'],
-    "Toronto" =>      Team['tor'],
-    "Vancouver" =>    Team['van'],
-    "Washington" =>   Team['wsh'],
-    "Winnipeg" =>     Team['wpg']
+    "Pittsburgh"   => Team['pit'],
+    "San Jose"     => Team['sjs'],
+    "St. Louis"    => Team['stl'],
+    "Tampa Bay"    => Team['tbl'],
+    "Toronto"      => Team['tor'],
+    "Vancouver"    => Team['van'],
+    "Washington"   => Team['wsh'],
+    "Winnipeg"     => Team['wpg'],
+    "Atlanta"      => Team['wpg'], # Atlanta Thrashers -> Winnipeg Jets in 2011-2012
   }[str]
 end
